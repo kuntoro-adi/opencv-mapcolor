@@ -6,6 +6,8 @@ layout: default
 
 Many people agree that cat is a cute animal. Look at this picture.
 
+Taken from [https://www.pexels.com/photo/animal-kitten-cat-pet-7517/](pexels)
+
 ![](animal-sitting-animals-inside.jpg)
 
 Despite the cuteness, not everybody feels comfortable with blue color. Some people prefur green, as depicted in the following picture.
@@ -78,6 +80,16 @@ void mapIntensity(InputArray src, OutputArray dst, vector<Range> initialIntensit
 
 The first ```mapIntensity``` function deals with one channel image. The second one deals with multichannel image.
 
+The first function is implemented by the following steps.
+
+1. Making sure that the number of channel is only one.
+1. By default the image format usually unsigned int. The image is converted into 32 bit floating point format to enable floating point and negative result of operation.
+1. Map the region of interest.
+1. Convert back image to unsigned in format.
+1. Get the image outside region of interest.
+1. Combine the images.
+1. Set the output.
+
 The function for one channel is shown in the following.
 
 {% highlight c++ %}
@@ -125,7 +137,7 @@ void mapIntensity(InputArray src, OutputArray dst, Range initialIntensity, Range
 }
 {% endhighlight %}
 
-The function for multi-channel is shown in the following.
+The function for multi-channel is shown in the following. It is implemented as using single channel ```mapIntensity``` for each image channel.
 
 {% highlight c++ %}
 /// Function to map between two ranges of intensities. 
@@ -164,122 +176,48 @@ void mapIntensity(InputArray src, OutputArray dst, vector<Range> initialIntensit
 
 ## [](#header-2)Grayscale
 
+```cpp
+	Mat img = imread("animal-sitting-animals-inside.jpg", IMREAD_COLOR);
+
+	if (img.empty())
+	{
+		cout << "Can not load image" << endl;
+	}
+
+	Mat srcGray; 
+	Mat dstGray;
+	cvtColor(img, srcGray, COLOR_BGR2GRAY);
+
+	mapIntensity(srcGray, dstGray, Range(0, 255), Range(255, 0));
+```
+
 ## [](#header-2)HSV Color Image
 
-Text can be **bold**, _italic_, or ~~strikethrough~~.
+```cpp
+	Mat img = imread("animal-sitting-animals-inside.jpg", IMREAD_COLOR);
 
-[Link to another page](another-page).
+	if (img.empty())
+	{
+		cout << "Can not load image" << endl;
+	}
 
-There should be whitespace between paragraphs.
-There should be whitespace between paragraphs. We recommend including a README, or a file with information about your project.
+	/// HSV intensity mapping
 
-# [](#header-1)Header 1
-This is a normal paragraph following a header. GitHub is a code hosting platform for version control and collaboration. It lets you and others work together on projects from anywhere.
+	/// hsv initial range
+	vector<Range> initial;
+	initial.push_back(Range(80, 120)); // hue
+	initial.push_back(Range(0, 255)); // saturation
+	initial.push_back(Range(0, 255)); // value
+	/// hsv target range
+	vector<Range> target;
+	target.push_back(Range(35, 70)); // hue
+	target.push_back(Range(0, 255)); // saturation
+	target.push_back(Range(0, 255)); // value
 
-## [](#header-2)Header 2
+	Mat hsvMapped;
+	cvtColor(img, hsvMapped, COLOR_BGR2HSV);
+	mapIntensity(hsvMapped, hsvMapped, initial, target);
+	cvtColor(hsvMapped, hsvMapped, COLOR_HSV2BGR);
 
-> This is a blockquote following a header.
->
-> When something is important enough, you do it even if the odds are not in your favor.
-
-### [](#header-3)Header 
-
-```js
-// Javascript code with syntax highlighting.
-var fun = function lang(l) {
-  dateformat.i18n = require('./lang/' + l)
-  return true;
-}
-```
-
-```ruby
-# Ruby code with syntax highlighting
-GitHubPages::Dependencies.gems.each do |gem, version|
-  s.add_dependency(gem, "= #{version}")
-end
-```
-
-#### [](#header-4)Header 4
-
-*   This is an unordered list following a header.
-*   This is an unordered list following a header.
-*   This is an unordered list following a header.
-
-##### [](#header-5)Header 5
-
-1.  This is an ordered list following a header.
-2.  This is an ordered list following a header.
-3.  This is an ordered list following a header.
-
-###### [](#header-6)Header 6
-
-| head1        | head two          | three |
-|:-------------|:------------------|:------|
-| ok           | good swedish fish | nice  |
-| out of stock | good and plenty   | nice  |
-| ok           | good `oreos`      | hmm   |
-| ok           | good `zoute` drop | yumm  |
-
-### There's a horizontal rule below this.
-
-* * *
-
-### Here is an unordered list:
-
-*   Item foo
-*   Item bar
-*   Item baz
-*   Item zip
-
-### And an ordered list:
-
-1.  Item one
-1.  Item two
-1.  Item three
-1.  Item four
-
-### And a nested list:
-
-- level 1 item
-  - level 2 item
-  - level 2 item
-    - level 3 item
-    - level 3 item
-- level 1 item
-  - level 2 item
-  - level 2 item
-  - level 2 item
-- level 1 item
-  - level 2 item
-  - level 2 item
-- level 1 item
-
-### Small image
-
-![](https://assets-cdn.github.com/images/icons/emoji/octocat.png)
-
-### Large image
-
-![](https://guides.github.com/activities/hello-world/branching.png)
-
-
-### Definition lists can be used with HTML syntax.
-
-<dl>
-<dt>Name</dt>
-<dd>Godzilla</dd>
-<dt>Born</dt>
-<dd>1952</dd>
-<dt>Birthplace</dt>
-<dd>Japan</dd>
-<dt>Color</dt>
-<dd>Green</dd>
-</dl>
-
-```
-Long, single-line code blocks should not wrap. They should horizontally scroll if they are too long. This line should be long enough to demonstrate this.
-```
-
-```
-The final element.
+	display("Mapped - Color", hsvMapped);
 ```
