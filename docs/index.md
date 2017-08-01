@@ -6,11 +6,11 @@ layout: default
 
 Many people agree that cat is a cute animal. Look at this picture.
 
-![](opencv-mapcolor/docs/animal-sitting-animals-inside.jpg)
+![](https://github.com/kuntoro-adi/opencv-mapcolor/blob/master/docs/animal-sitting-animals-inside.jpg?raw=true)
 
 Despite the cuteness, not everybody feels comfortable with blue color. Some people prefur green, as depicted in the following picture.
 
-![](opencv-mapcolor/docs/cat_relax_green.jpg)
+![](https://github.com/kuntoro-adi/opencv-mapcolor/blob/master/docs/cat_relax_green.jpg?raw=true)
 
 This project demonstrates how to use OpenCV to help us enjoying the cuteness of a cat while maintaining our favorite color
 
