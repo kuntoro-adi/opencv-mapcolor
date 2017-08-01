@@ -58,7 +58,7 @@ That's all we do to map intensity on grayscale image. Intuitively for color imag
 
 The code consists of two functions as defined in the header file. 
 
-```C++
+{% highlight c++ %}
 
 #pragma once
 
@@ -74,13 +74,13 @@ void mapIntensity(InputArray src, OutputArray dst, Range initialIntensity, Range
 
 void mapIntensity(InputArray src, OutputArray dst, vector<Range> initialIntensities, vector<Range> targetIntensities);
 
-```
+{% endhighlight %}
 
 The first ```mapIntensity``` function deals with one channel image. The second one deals with multichannel image.
 
 The function for one channel is shown in the following.
 
-```C++
+{% highlight c++ %}
 /// Function to map between two ranges of intensity.  The initial intensity will be mapped
 /// to the target intensity. This function assumes that the input only has one channel.
 void mapIntensity(InputArray src, OutputArray dst, Range initialIntensity, Range targetIntensity)
@@ -123,11 +123,11 @@ void mapIntensity(InputArray src, OutputArray dst, Range initialIntensity, Range
 	/// Set the output value
 	dst.assign(result);
 }
-```
+{% endhighlight %}
 
 The function for multi-channel is shown in the following.
 
-```C++
+{% highlight c++ %}
 /// Function to map between two ranges of intensities. 
 /// This function can handle multichannel.
 void mapIntensity(InputArray src, OutputArray dst, vector<Range> initialIntensities, vector<Range> targetIntensities)
@@ -158,7 +158,7 @@ void mapIntensity(InputArray src, OutputArray dst, vector<Range> initialIntensit
 	/// Set the output value
 	dst.assign(result);
 }
-```
+{% endhighlight %}
 
 # [](#header-1)Usage 
 
