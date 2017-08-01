@@ -17,6 +17,9 @@ void mapIntensity(InputArray src, OutputArray dst, Range initialIntensity, Range
 	inRange(srcMat, initialIntensity.start, initialIntensity.end, region);
 
 	/// Compute the mapped intensity given the region of interest
+	/// initial_length = initial_intensity_max - initial_intensity_min
+	/// target_length = target_intensity_max - target_intensity_min
+	/// Processed_Image = target_intensity_min + ((Masked_Image - initial_intensity_min) / (initial_length)) * (target_lenth)
 	Mat resultTemp(srcMat.rows, srcMat.cols, srcMat.type());
 	subtract(srcMat, (float)initialIntensity.start, resultTemp, region);
 	divide(resultTemp, (float)(initialIntensity.end - initialIntensity.start), resultTemp);
