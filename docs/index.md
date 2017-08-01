@@ -6,11 +6,11 @@ layout: default
 
 Many people agree that cat is a cute animal. Look at this picture.
 
-
+![](https://github.com/kuntoro-adi/opencv-mapcolor/blob/master/docs/animal-sitting-animals-inside.jpg)
 
 Despite the cuteness, not everybody feels comfortable with blue color. Some people prefur green, as depicted in the following picture.
 
-
+![](https://github.com/kuntoro-adi/opencv-mapcolor/blob/master/docs/cat_relax_green.jpg)
 
 This project demonstrates how to use OpenCV to help us enjoying the cuteness of a cat while maintaining our favorite color
 
@@ -32,11 +32,10 @@ target_intensity_max = 150
 
 Let's define
 
-
 ```
 initial_length = initial_intensity_max - initial_intensity_min
 
-target_length = target-intensity-max - target-intensity-min
+target_length = target_intensity_max - target_intensity_min
 ```
 
 The new image can be obtained started with masking the image to obtain the region of interest (we remove all the pixels with intensity outside 50-100 range). Let's denote this as Masked_Image. Let's call the image whith excluding the pixels within Masked_Image as Non_Region_Image. 
@@ -75,6 +74,90 @@ void mapIntensity(InputArray src, OutputArray dst, Range initialIntensity, Range
 
 void mapIntensity(InputArray src, OutputArray dst, vector<Range> initialIntensities, vector<Range> targetIntensities);
 
+```
+
+The first ```mapIntensity``` function deals with one channel image. The second one deals with multichannel image.
+
+The function for one channel is shown in the following.
+
+```C++
+/// Function to map between two ranges of intensity.  The initial intensity will be mapped
+/// to the target intensity. This function assumes that the input only has one channel.
+void mapIntensity(InputArray src, OutputArray dst, Range initialIntensity, Range targetIntensity)
+{
+	if (src.getMat().channels() > 1) {
+		throw invalid_argument("number of channel > 1");
+		return;
+	}
+
+	/// Convert Mat to float to enable floating point and negative value
+	Mat srcMat;
+	src.getMat().convertTo(srcMat, CV_32F);
+	/// Specify the region which satisfies the initial intensity criteria
+	Mat region;
+	inRange(srcMat, initialIntensity.start, initialIntensity.end, region);
+
+	/// Compute the mapped intensity given the region of interest
+	/// initial_length = initial_intensity_max - initial_intensity_min
+	/// target_length = target_intensity_max - target_intensity_min
+	/// Processed_Image = target_intensity_min + ((Masked_Image - initial_intensity_min) / (initial_length)) * (target_lenth)
+	Mat resultTemp(srcMat.rows, srcMat.cols, srcMat.type());
+	subtract(srcMat, (float)initialIntensity.start, resultTemp, region);
+	divide(resultTemp, (float)(initialIntensity.end - initialIntensity.start), resultTemp);
+	multiply(resultTemp, (float)(targetIntensity.end - targetIntensity.start), resultTemp);
+	add(resultTemp, targetIntensity.start, resultTemp, region);
+
+	/// Convert to the default format back to enable displaying
+	resultTemp.convertTo(resultTemp, CV_8U);
+
+	/// Now add the non-region of interest with the region with mapped intensity 
+	Mat inverseRegion;
+	bitwise_not(region, inverseRegion);
+	Mat excluded;
+	srcMat.copyTo(excluded, inverseRegion);
+	excluded.convertTo(excluded, CV_8U);
+
+	Mat result;
+	add(excluded, resultTemp, result);
+
+	/// Set the output value
+	dst.assign(result);
+}
+```
+
+The function for multi-channel is shown in the following.
+
+```C++
+/// Function to map between two ranges of intensities. 
+/// This function can handle multichannel.
+void mapIntensity(InputArray src, OutputArray dst, vector<Range> initialIntensities, vector<Range> targetIntensities)
+{
+	Mat srcMat = src.getMat();
+	
+	/// Check if the number of intensities to be mapped conforms the number of image channels
+	if ((initialIntensities.size() != srcMat.channels()) && (targetIntensities.size() != srcMat.channels())) {
+		throw invalid_argument("the number of channel doesn't match the number intensity range");
+		return;
+	}
+	
+	/// Split each channel
+	vector<Mat> channels;
+	split(srcMat, channels);
+
+	/// Map each channel
+	for (int i = 0; i < channels.size(); i++) {
+		mapIntensity(channels[i], channels[i], 
+			Range(initialIntensities[i].start, initialIntensities[i].end), 
+			Range(targetIntensities[i].start, targetIntensities[i].end));
+	}
+
+	/// Combine back
+	Mat result;
+	merge(channels, result);
+
+	/// Set the output value
+	dst.assign(result);
+}
 ```
 
 # [](#header-1)Usage 
