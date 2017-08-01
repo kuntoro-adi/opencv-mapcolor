@@ -219,5 +219,4 @@ void mapIntensity(InputArray src, OutputArray dst, vector<Range> initialIntensit
 	mapIntensity(hsvMapped, hsvMapped, initial, target);
 	cvtColor(hsvMapped, hsvMapped, COLOR_HSV2BGR);
 
-	display("Mapped - Color", hsvMapped);
 ```
