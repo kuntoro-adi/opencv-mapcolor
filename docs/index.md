@@ -2,9 +2,10 @@
 layout: default
 ---
 
-# [](#header-1)Beckground Story
+# [](#header-1)Background Story
 
 Many people agree that cat is a cute animal. Look at this picture.
+
 
 
 Despite the cuteness, not everybody feels comfortable with blue color. Some people prefur green, as depicted in the following picture.
@@ -19,31 +20,62 @@ This project demonstrates how to use OpenCV to help us enjoying the cuteness of 
 
 Let's take a simple example of grayscale image. Given a grayscale image with intensity 0-255, we want to convert all pixels with intensity 50-100 to 125-150. Simple math will allows us to do it. Let's formulate:
 
-```octave
-initial-intensity-min: 50
+```
+initial_intensity_min = 50
 
-initial intensity-max: 100
+initial_intensity_max = 100
 
-target-intensity-min: 125
+target_intensity_min = 125
 
-target-intensity-max: 150
+target_intensity_max = 150
 ```
 
-The new image can be obtained started with masking the image to obtain the region of interest (we remove all the pixels with intensity outside 50-100 range). Let's denote this as Masked Image. Then we process the image as the following:
+Let's define
 
-```octave
-Processed Image = target-intensity-min + ((Masked Image - initial-intensity-min) / (initial-intensity-max - initial-intensity-min)) * (target-intensity-max - target-intensity-min)
+
+```
+initial_length = initial_intensity_max - initial_intensity_min
+
+target_length = target-intensity-max - target-intensity-min
 ```
 
-The final image can be obtained by combining by adding the Processed Image with the pixels outside the region of interest.
+The new image can be obtained started with masking the image to obtain the region of interest (we remove all the pixels with intensity outside 50-100 range). Let's denote this as Masked_Image. Let's call the image whith excluding the pixels within Masked_Image as Non_Region_Image. 
 
----
+Then we process the image as the following:
 
----
+```
+Processed_Image = target_intensity_min + ((Masked_Image - initial_intensity_min) / (initial_length)) * (target_lenth)
+```
+
+The final image can be obtained by combining by adding the Processed_Image with the pixels outside the region of interest.
+
+```
+Final_Image = Non_Region_Image + Processed_Image
+```
+
+That's all we do to map intensity on grayscale image. Intuitively for color image we could do the same process for each channel.
 
 ## [](#header-2)Explanation
 
+The code consists of two functions as defined in the header file. 
 
+```C++
+
+#pragma once
+
+#include <iostream>
+#include <opencv2\core\core.hpp>
+#include <opencv2\imgproc\imgproc.hpp>
+#include <opencv2\highgui\highgui.hpp>
+
+using namespace std;
+using namespace cv;
+
+void mapIntensity(InputArray src, OutputArray dst, Range initialIntensity, Range targetIntensity);
+
+void mapIntensity(InputArray src, OutputArray dst, vector<Range> initialIntensities, vector<Range> targetIntensities);
+
+```
 
 # [](#header-1)Usage 
 
