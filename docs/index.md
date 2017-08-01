@@ -6,7 +6,7 @@ layout: default
 
 Many people agree that cat is a cute animal. Look at this picture.
 
-Taken from [https://www.pexels.com/photo/animal-kitten-cat-pet-7517/](pexels)
+Taken from [https://www.pexels.com/photo/animal-kitten-cat-pet-7517/](https://www.pexels.com/photo/animal-kitten-cat-pet-7517/)
 
 ![](animal-sitting-animals-inside.jpg)
 
